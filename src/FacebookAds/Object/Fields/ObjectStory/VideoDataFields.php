@@ -31,4 +31,5 @@ abstract class VideoDataFields {
   const IMAGE_URL = 'image_url';
   const TITLE = 'title';
   const VIDEO_ID = 'video_id';
+  const IMAGE_HASH = 'image_hash';
 }

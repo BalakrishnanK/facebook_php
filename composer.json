@@ -16,5 +16,8 @@
         "psr-4": {
             "FacebookAds\\": "src/FacebookAds/"
         }
+    },
+    "require": {
+        "facebook/php-ads-sdk": "dev-master"
     }
 }

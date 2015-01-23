@@ -28,6 +28,6 @@ abstract class AdBuyingTypes {
 
   const AUCTION  = 'AUCTION';
   const FIXED_CPM = 'FIXED_CPM';
-  const RESERVED = 'RESERVED';
+  const MIXED = 'MIXED';
 
 }

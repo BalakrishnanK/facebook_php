@@ -22,12 +22,10 @@
  *
  */
 
-// Set your access token here:
-$access_token = null;
-$app_id = null;
-$app_secret = null;
-// should begin with "act_" (eg: $account_id = 'act_1234567890';)
-$account_id = null;
+$access_token = 'CAAC4XoGMYroBAOn5BpQ9wLQYljsca7LUQHqplDp8mp1ZCx0XWQvhFz4ILxXgwVWKw38RqUaqf00nhjtmhrPtcMp8Ivv3MJ7QomzbKQ63bPWYg3wCqCFb8StqEwZBhtvMJtCAdNdCZAsb6VipzBH5nOh2Rx4XlwZB2tVoIIsz9e7IxTn5nws9ZCcdp6ZC479gBzIB0ezWUXa83HxEKiQyst';
+$app_id = '202716039897786';
+$app_secret = '641336fcda0e8c5a5f9919392ffb7dd9';
+$account_id = 'act_323989862';
 
 if (is_null($access_token) || is_null($app_id) || is_null($app_secret)) {
   throw new \Exception(
@@ -53,24 +51,38 @@ use FacebookAds\Object\Fields\CustomAudienceFields;
 use FacebookAds\Object\Values\CustomAudienceTypes;
 
 // Create a custom audience object, setting the parent to be the account id
-$audience = new CustomAudience(null, $account_id);
+
+$customaudid = '6028312438120';
+
+$audience = new CustomAudience($customaudid, $account_id);
 $audience->setData(array(
-  CustomAudienceFields::NAME => 'My Custom Audiece',
+  CustomAudienceFields::NAME => 'Cust_audience_e3',
   CustomAudienceFields::DESCRIPTION => 'Lots of people',
+//  CustomAudienceFields::ID => '6028246387120',
 ));
 // Create the audience
-$audience->create();
+if(is_null($customaudid)){
+	$audience->create();
+}
 echo "Audience ID: " . $audience->id."\n";
+echo "Audience count : ". $audience->approximate_count."\n";
+$filename = "e.txt";
+$file = fopen( $filename, "r" );
+if( $file == false )
+{
+   echo ( "Error in opening file" );
+   exit();
+}
+$filesize = filesize( $filename );
+$filetext = fread( $file, $filesize );
 
-// Assuming you have an array of emails:
-$emails = array(
-  'paul@example.com',
-  'luca@example.com',
-  'bruce@example.com',
-  'peihua@example.com',
-);
+#echo $filetext;
+$emails = explode(',',$filetext);
 
-$audience->addUsers($emails, CustomAudienceTypes::EMAIL);
+echo count($emails).'\n';
+
+$audience->addUsers($emails, CustomAudienceTypes::MOBILE_ADVERTISER_ID);
 $audience->read(array(CustomAudienceFields::APPROXIMATE_COUNT));
 echo "Estimated Size:"
-  . $audience->{CustomAudienceFields::APPROXIMATE_COUNT}."\n";
+ . $audience->{CustomAudienceFields::APPROXIMATE_COUNT}."\n";
+

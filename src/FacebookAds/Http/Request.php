@@ -179,6 +179,7 @@ class Request implements RequestInterface {
 
   /**
    * @return string
+//  die;
    */
   public function getPath() {
     return $this->path;

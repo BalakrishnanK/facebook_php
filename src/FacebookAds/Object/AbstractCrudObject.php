@@ -249,21 +249,19 @@ abstract class AbstractCrudObject extends AbstractObject {
 
     $this->clearHistory();
     $data = $response->getContent();
-    if (!isset($params['execution_options'])){
-      $id = is_string($data) ? $data : $data[static::FIELD_ID];
+    $id = is_string($data) ? $data : $data[static::FIELD_ID];
 
     /** @var AbstractCrudObject $this */
-      if ($this instanceof CanRedownloadInterface
-        && isset($params[CanRedownloadInterface::PARAM_REDOWNLOAD])
-        && $params[CanRedownloadInterface::PARAM_REDOWNLOAD] === true
-        && isset($data['data'][$id])
-        && is_array($data['data'][$id])
-      ) {
-        $this->setData($data['data'][$id]);
-      }
-
-      $this->data[static::FIELD_ID] = (string) $id;
+    if ($this instanceof CanRedownloadInterface
+      && isset($params[CanRedownloadInterface::PARAM_REDOWNLOAD])
+      && $params[CanRedownloadInterface::PARAM_REDOWNLOAD] === true
+      && isset($data['data'][$id])
+      && is_array($data['data'][$id])
+    ) {
+      $this->setData($data['data'][$id]);
     }
+
+    $this->data[static::FIELD_ID] = (string) $id;
 
 
     return $this;
@@ -329,14 +327,13 @@ abstract class AbstractCrudObject extends AbstractObject {
    * Helper function which determines whether an object should be created or
    * updated
    *
-   * @param array $params
    * @return $this
    */
-  public function save(array $params = array()) {
+  public function save() {
     if ($this->data[static::FIELD_ID]) {
-      return $this->update($params);
+      return $this->update();
     } else {
-      return $this->create($params);
+      return $this->create();
     }
   }
 
@@ -437,6 +434,41 @@ abstract class AbstractCrudObject extends AbstractObject {
       $response,
       new $prototype_class(null, $this->{static::FIELD_ID}, $this->getApi()));
   }
+/*
+  protected function getManyByConnectionPages(
+    $prototype_class,
+    array $fields = array(),
+    array $params = array(),
+    $endpoint = null) {
+
+    $response = $this->fetchConnectionPages(
+      $fields, $params, $prototype_class, $endpoint);
+
+    return new Cursor(
+      $response,
+      new $prototype_class(null, $this->{static::FIELD_ID}, $this->getApi()));
+  }
+
+  protected function fetchConnectionPages(
+    array $fields = array(),
+    array $params = array(),
+    $prototype_class,
+    $endpoint = null) {
+
+    $fields = implode(',', $fields ?: static::getDefaultReadFields());
+    if ($fields) {
+      $params['fields'] = $fields;
+    }
+
+    $endpoint = $this->assureEndpoint($prototype_class, $endpoint);
+
+    return $this->getApi()->call(
+      '/'.$prototype_class.'/'.$endpoint,
+      RequestInterface::METHOD_GET,
+      $params);
+  }
+*/
+
 
   /**
    * Delete objects.
@@ -509,6 +541,6 @@ abstract class AbstractCrudObject extends AbstractObject {
       $result[] = $object;
     }
 
-    return $result;
+    return new Cursor($result, $response);
   }
 }

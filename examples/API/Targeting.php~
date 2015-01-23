@@ -1,0 +1,109 @@
+<?php
+
+namespace FacebookAds\examples;
+
+use FacebookAds\Api;
+use FacebookAds\Object\CustomAudience;
+use FacebookAds\Object\Fields\CustomAudienceFields;
+use FacebookAds\Object\Values\CustomAudienceTypes;
+
+use FacebookAds\Object\AdAccount;
+use FacebookAds\Object\Fields\AdAccountFields;
+
+use FacebookAds\Object\AdCreative;
+use FacebookAds\Object\Fields\AdCreativeFields;
+use FacebookAds\Object\Fields\AdPreviewFields;
+
+use FacebookAds\Object\AdCampaign;
+use FacebookAds\Object\Fields\AdCampaignFields;
+use FacebookAds\Object\Values\AdObjectives;
+
+use FacebookAds\Object\AdSet;
+use FacebookAds\Object\Fields\AdSetFields;
+use FacebookAds\Object\Fields\AdGroupBidInfoFields;
+use FacebookAds\Object\Values\BidTypes;
+
+use FacebookAds\Object\AdGroup;
+use FacebookAds\Object\Fields\AdGroupFields;
+ 
+class Targeting{
+
+ private static $config = array();
+  
+ private static $access_token;
+ private static $app_id;
+ private static $app_secret;
+ private static $account_id;
+
+ private static function idxt(array $array, $key) {
+   if (!array_key_exists($key, $array) || !$array[$key]) {
+     throw new \Exception("Missing mandatory config '{$key}'");
+   }
+
+   return $array[$key];
+ }
+
+ private static function confx($key, $default = null) {
+   return self::idx(self::$config, $key, $default);
+ }
+
+ private static function confxt($key) {
+    return self::idxt(self::$config, $key);
+ }
+
+ public static function init(){
+  $config_path = '../config1.php';
+     if (!is_readable($config_path)) {
+       throw new \RuntimeException("Could not read config.php");
+  }
+ 
+  self::$config=include $config_path; 
+  self::$app_id = self::confxt('app_id');
+  self::$account_id = self::confxt('account_id');
+  self::$app_secret = self::confxt('app_secret');
+  self::$access_token = self::confxt('access_token');
+ }
+
+ public function api_init(){
+  define('SDK_DIR', __DIR__ . '/../..'); // Path to the SDK directory
+  $loader = include SDK_DIR.'/vendor/autoload.php';
+  Api::init(self::$app_id, self::$app_secret, self::$access_token);
+ }
+
+ public function parseArguments($argv){
+  $targetingArguments = array();
+  $k = array_search("-t", $argv);
+  $targetingArguments['type'] = $argv[$k+1];
+  $k = array_search("-id", $argv);
+  $targetingArguments['id'] = $argv[$k+1];
+  $k = array_search("-et", $argv);
+  $targetingArguments['end_time'] = 0;
+  $targetingArguments['end_time'] = $argv[$k+1];
+  $k = array_search("-st", $argv);
+  $targetingArguments['start_time'] = 0;
+  $targetingArguments['start_time'] = $argv[$k+1];
+
+  if(!array_key_exists("-st", $targetingArguments)){
+	$targetingArguments['start_time'] = 0;
+  }
+  if(!array_key_exists("-et", $targetingArguments)){
+        $targetingArguments['end_time'] = 0;
+  }
+  if($targetingArguments['type'] == 'adacctrep') {
+	self::reportAdAccount($targetingArguments);
+  }else if($targetingArguments['type'] == 'adcampaign') {
+	self::reportAdCampaign($targetingArguments);
+  }else if($targetingArguments['type'] == 'adset') {
+        self::reportAdSet($targetingArguments);
+  }else if($targetingArguments['type'] == 'adgroup') {
+        self::reportAdGroup($targetingArguments);
+  }
+
+ }
+
+
+}
+Targeting::init();
+Targeting::api_init();
+Targeting::parseArguments($argv);
+?>

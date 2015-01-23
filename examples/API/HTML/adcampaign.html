@@ -1,0 +1,40 @@
+<html>
+<body>
+<form action="../../ObjectCreation.php" method="post">
+<input type="hidden" name="type" value="adcampaign">
+Name:<br>
+<input type="text" name="adcampaignname">
+<br>
+Objective:<br>
+<select name="objective">
+<!--
+<option value="CANVAS_APP_ENGAGEMENT">CANVAS_APP_ENGAGEMENT</option>
+<option value="CANVAS_APP_INSTALLS ">CANVAS_APP_INSTALLS</option>
+<option value="MOBILE_APP_ENGAGEMENT">MOBILE_APP_ENGAGEMENT</option>
+<option value="MOBILE_APP_INSTALLS">MOBILE_APP_INSTALLS</option>
+<option value="EVENT_RESPONSES">EVENT_RESPONSES</option>
+<option value="LOCAL_AWARENESS">LOCAL_AWARENESS</option>
+<option value="NONE ">NONE</option>
+<option value="OFFER_CLAIMS ">OFFER_CLAIMS</option>
+<option value="WEBSITE_CONVERSIONS">WEBSITE_CONVERSIONS</option>
+-->
+<option value="WEBSITE_CLICKS">WEBSITE_CLICKS</option>
+<option value="PAGE_LIKES">PAGE_LIKES</option>
+<option value="POST_ENGAGEMENT">POST_ENGAGEMENT</option>
+<option value="VIDEO_VIEWS">VIDEO_VIEWS</option>
+</select>
+<br>
+
+Status:<br>
+<input type="radio" name="status" value="ACTIVE" checked>ACTIVE
+<br>
+<input type="radio" name="status" value="PAUSED">PAUSED
+<br>
+
+Buying type:<br>
+<input type="text" name="buying_type" value="AUCTION">
+<br><br>
+<input type="submit" value="Submit">
+</form>
+</body>
+</html>

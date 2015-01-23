@@ -27,10 +27,9 @@ namespace FacebookAds\Object;
 use FacebookAds\Cursor;
 use FacebookAds\Object\Fields\AdCampaignFields;
 use FacebookAds\Object\Traits\FieldValidation;
-use FacebookAds\Object\Traits\ObjectValidation;
 
 class AdCampaign extends AbstractArchivableCrudObject {
-  use FieldValidation, ObjectValidation;
+  use FieldValidation;
 
   /**
    * @var string
@@ -52,6 +51,19 @@ class AdCampaign extends AbstractArchivableCrudObject {
     AdCampaignFields::NAME,
     AdCampaignFields::STATUS,
     AdCampaignFields::BUYING_TYPE,
+    'created_time',
+    'spend_cap',
+    'campaign_group_status',
+    'can_use_spend_cap',
+    'promoted_object',
+    'start_time',
+    'stop_time',
+    'topline_id',
+    'updated_time',
+    'adgroups',
+    'stats',
+    'account_id',
+    'adcampaigns'
   );
 
   /**

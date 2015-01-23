@@ -23,11 +23,11 @@
  */
 
 // Set your access token here:
-$access_token = null;
-$app_id = null;
-$app_secret = null;
-// should begin with "act_" (eg: $account_id = 'act_1234567890';)
-$account_id = null;
+
+$access_token = 'CAAC4XoGMYroBAOn5BpQ9wLQYljsca7LUQHqplDp8mp1ZCx0XWQvhFz4ILxXgwVWKw38RqUaqf00nhjtmhrPtcMp8Ivv3MJ7QomzbKQ63bPWYg3wCqCFb8StqEwZBhtvMJtCAdNdCZAsb6VipzBH5nOh2Rx4XlwZB2tVoIIsz9e7IxTn5nws9ZCcdp6ZC479gBzIB0ezWUXa83HxEKiQyst';
+$app_id = '202716039897786';
+$app_secret = '641336fcda0e8c5a5f9919392ffb7dd9';
+$account_id = 'act_323989862';
 
 if (is_null($access_token) || is_null($app_id) || is_null($app_secret)) {
   throw new \Exception(
@@ -52,7 +52,7 @@ Api::init($app_id, $app_secret, $access_token);
 $logger = new CurlLogger();
 
 // To write to a file pass in a file handler
-// $logger = new CurlLogger(fopen('test','w'));
+$logger = new CurlLogger(fopen('test','w'));
 
 // If you need to escape double quotes, use the following - useful for docs
 $logger->setEscapeQuotes(true);

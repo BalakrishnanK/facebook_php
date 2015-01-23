@@ -124,6 +124,18 @@ class AdAccount extends AbstractCrudObject {
     return $this->getManyByConnection(AdSet::className(), $fields, $params);
   }
 
+ /**
+   * @param array $fields
+   * @param array $params
+   * @return Cursor
+   */
+  public function getAdCampaignsWithStats(
+    array $fields = array(), array $params = array()) {
+    return $this->getManyByConnection(
+      AdCampaign::className(), $fields, $params, 'adcampaigns');
+  }
+
+
   /**
    * @param array $fields
    * @param array $params
@@ -365,4 +377,10 @@ class AdAccount extends AbstractCrudObject {
     return $this->getManyByConnection(
       AdPreview::classname(), $fields, $params, 'generatepreviews');
   }
+
+  public function getPages(array $fields = array(), array $params = array()) {
+    return $this->getManyByConnectionPages(
+      Page::classname(), $fields, $params, 'promotable_posts');
+  }
+
 }

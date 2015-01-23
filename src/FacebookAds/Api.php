@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2014 Facebook, Inc.
  *
@@ -178,7 +179,10 @@ class Api {
     array $params = array()) {
 
     $request = $this->prepareRequest($path, $method, $params);
-
+    
+//    echo $path. "\n";
+//    echo $method. "\n";
+//    print_r ($params). "\n";
     return $this->executeRequest($request);
   }
 

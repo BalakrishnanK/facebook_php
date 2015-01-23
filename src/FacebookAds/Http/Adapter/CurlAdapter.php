@@ -180,6 +180,8 @@ class CurlAdapter extends AbstractAdapter {
         $headers[] = "{$header}: {$value}";
       }
       curl_setopt($this->handle, CURLOPT_HTTPHEADER, $headers);
+      curl_setopt($this->handle, CURLOPT_CONNECTTIMEOUT, 0);
+      curl_setopt($this->handle, CURLOPT_TIMEOUT, 0);
     }
 
     $postfields = array();

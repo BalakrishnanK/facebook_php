@@ -22,20 +22,41 @@
  *
  */
 
-namespace FacebookAds\Object\Traits;
+namespace FacebookAds\Object;
 
-trait ObjectValidation {
+use FacebookAds\Object\Fields\AdSetFields;
+use FacebookAds\Object\Traits\FieldValidation;
+use FacebookAds\Cursor;
+
+class Page extends AbstractArchivableCrudObject
+{
   /**
-   * @param array $params
-   * @throws \InvalidArgumentException
+   * @var string[]
    */
-  public function validate(array $params = array()) {
-    $changed_fields = $this->changedFields;
-    $validate_flag = array(
-      'execution_options' => array('validate_only')
-    );
-    $this->save(array_merge($params, $validate_flag));
-    $this->changedFields = $changed_fields;
-    return $this;
+  protected static $fields = array(
+	'id',
+        'name',
+  );
+
+  public function getPages(array $fields = array(), array $params = array()) {
+    return $this->getManyByConnection(
+      PagePosts::classname(), $fields, $params, 'promotable_posts');
+  }
+
+
+   /**
+   * @return string
+  */   
+  protected function getEndpoint() {
+    return 'page';
+  }
+
+  /**
+   * @return string
+  */   
+  public function getStatusFieldName() {
+    return 'status';
   }
 }
+
+?>

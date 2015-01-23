@@ -1,0 +1,269 @@
+<?php
+
+namespace FacebookAds\examples;
+
+use FacebookAds\Api;
+use FacebookAds\Object\CustomAudience;
+use FacebookAds\Object\Fields\CustomAudienceFields;
+use FacebookAds\Object\Values\CustomAudienceTypes;
+
+use FacebookAds\Object\AdAccount;
+use FacebookAds\Object\Fields\AdAccountFields;
+
+use FacebookAds\Object\AdCreative;
+use FacebookAds\Object\Fields\AdCreativeFields;
+use FacebookAds\Object\Fields\AdPreviewFields;
+
+use FacebookAds\Object\AdCampaign;
+use FacebookAds\Object\Fields\AdCampaignFields;
+use FacebookAds\Object\Values\AdObjectives;
+
+use FacebookAds\Object\AdSet;
+use FacebookAds\Object\Fields\AdSetFields;
+use FacebookAds\Object\Fields\AdGroupBidInfoFields;
+use FacebookAds\Object\Values\BidTypes;
+
+use FacebookAds\Object\AdGroup;
+use FacebookAds\Object\Fields\AdGroupFields;
+ 
+class Reporting{
+
+ private static $config = array();
+  
+ private static $access_token;
+ private static $app_id;
+ private static $app_secret;
+ private static $account_id;
+
+ private static function idxt(array $array, $key) {
+   if (!array_key_exists($key, $array) || !$array[$key]) {
+     throw new \Exception("Missing mandatory config '{$key}'");
+   }
+
+   return $array[$key];
+ }
+
+ private static function confx($key, $default = null) {
+   return self::idx(self::$config, $key, $default);
+ }
+
+ private static function confxt($key) {
+    return self::idxt(self::$config, $key);
+ }
+
+ public static function init(){
+  $config_path =  __DIR__ .'/../../config1.php';
+
+     if (!is_readable($config_path)) {
+       throw new \RuntimeException("Could not read config1.php");
+  }
+ 
+  self::$config=include $config_path; 
+  self::$app_id = self::confxt('app_id');
+  self::$account_id = self::confxt('account_id');
+  self::$app_secret = self::confxt('app_secret');
+  self::$access_token = self::confxt('access_token');
+ }
+
+ public function api_init(){
+  define('SDK_DIR', __DIR__ . '/../..'); // Path to the SDK directory
+  $loader = include SDK_DIR.'/vendor/autoload.php';
+  Api::init(self::$app_id, self::$app_secret, self::$access_token);
+ }
+
+ public function parseArguments($argv){
+  $reportingArguments = array();
+  $k = array_search("-t", $argv);
+  $reportingArguments['type'] = $argv[$k+1];
+  $k = array_search("-id", $argv);
+  $reportingArguments['id'] = $argv[$k+1];
+  $k = array_search("-et", $argv);
+  if ($k == null){
+  	$reportingArguments['end_time'] = 0;
+  }else{
+  	$reportingArguments['end_time'] = $argv[$k+1];
+  }
+  $k = array_search("-st", $argv);
+  if ($k == null){
+  	$reportingArguments['start_time'] = 0;
+  }else{
+  	$reportingArguments['start_time'] = $argv[$k+1];
+  }
+
+  if($reportingArguments['type'] == 'adacctrep') {
+	self::reportAdAccount($reportingArguments);
+  }else if($reportingArguments['type'] == 'adcampaign') {
+	self::reportAdCampaign($reportingArguments);
+  }else if($reportingArguments['type'] == 'adset') {
+        self::reportAdSet($reportingArguments);
+  }else if($reportingArguments['type'] == 'adgroup') {
+        self::reportAdGroup($reportingArguments);
+  }
+
+ }
+
+ public function reportAdGroup($adGroupParams){
+  $adGroup = new AdGroup($adGroupParams['id'], self::$account_id);
+  $params = array();
+  if($adGroupParams['start_time'] != 0){
+        $params['start_time'] = $adGroupParams['start_time'];
+  }
+  if($adGroupParams['end_time'] != 0){
+        $params['end_time'] = $adGroupParams['end_time'];
+  }       
+  $stats = $adGroup->getStats(array(),$params);
+  echo "---------------------------------------------------------------------------------------------"."\n";
+  print_r($stats->getData());
+ }
+
+
+ public function reportAdSet($adSetParams){
+  $adSet = new AdSet($adSetParams['id'], self::$account_id);
+  $params = array();
+  if($adSetParams['start_time'] != 0){
+        $params['start_time'] = $adSetParams['start_time'];
+  }
+  if($adSetParams['end_time'] != 0){
+        $params['end_time'] = $adSetParams['end_time'];
+  }
+  $stats = $adSet->getStats(array(),$params);
+  echo "---------------------------------------------------------------------------------------------"."\n";
+  print_r($stats->getData());
+ }
+
+ public function reportAdCampaign($adCampaignParams){
+  $adCampaign = new AdCampaign($adCampaignParams['id'], self::$account_id);
+  $fields = array(
+  'impressions',
+  'clicks',
+  'spent',
+  'campaign_group_id',
+  'end_time',
+  'actions',
+  'social_clicks',
+  'social_impressions',
+  'social_spent',
+  'social_unique_clicks',
+  'social_unique_impressions',
+  'start_time',
+  'unique_clicks',
+  'unique_impressions',
+  );
+
+  $params = array();
+  if($adCampaignParams['start_time'] != 0){
+  	$params['start_time'] = $adCampaignParams['start_time'];
+  }
+  if($adCampaignParams['end_time'] != 0){
+  	$params['end_time'] = $adCampaignParams['end_time'];
+  }
+  
+  $stats = $adCampaign->getStats($fields, $params);
+  echo "---------------------------------------------------------------------------------------------"."\n";
+  print_r($stats->getResponse()->getContent());
+ }
+
+ public function reportAdAccount($adAccountParams){
+  $adaccount = new AdAccount(self::$account_id);
+  $params = array(
+//    'date_preset'=>'last_28_days',
+    'data_columns'=> array(
+	'campaign_id',
+	'actions',
+	'spend',
+//	'action_device',
+//	'placement',
+//	'impression_device',
+// Impression and spend columns
+	'reach',
+	'frequency',
+	'social_reach',
+	'social_impressions',
+	'unique_impressions',
+	'cpp',
+	'cpm',
+	'impressions', 
+// Clicks 
+	'clicks',
+	'unique_clicks',
+	'social_clicks',	
+	'unique_social_clicks',
+	'ctr',
+	'unique_ctr',
+	'cpc',
+	'cost_per_unique_click',
+),
+    'async' => 'true',
+  );
+
+  echo "inside = ".$adAccountParams['start_time']."\n";
+
+  if($adAccountParams['start_time'] != 0 && $adAccountParams['end_time'] != 0){
+        $params['time_interval'] = "{ 'time_start' : ".$adAccountParams['start_time'].", 'time_stop' : "
+				    .$adAccountParams['end_time']."}";
+	echo "timeI = ".$params['time_interval']."\n";
+  }else{
+	$params['date_preset'] = 'last_28_days';
+  }
+
+  $reportStats = $adaccount->getReportsStats(array(),$params);
+  echo "---------------------------------------------------------------------------------------------"."\n";
+  $reportArray = $reportStats->getResponse()->getContent();
+  print_r($reportStats->getResponse()->getContent());
+  echo "\n";
+  echo "---------------------------------------------------------------------------------------------"."\n";
+//  $stats = $adaccount->getStats();
+  echo "---------------------------------------------------------------------------------------------"."\n"; 
+//  print_r($stats->getData());
+  echo "\n";
+/*  $fields = array(
+    AdPreviewFields::CREATIVE,
+    AdPreviewFields::POST,
+    AdPreviewFields::AD_FORMAT,
+    AdPreviewFields::BODY,
+  );
+  $creative = new AdCreative('6028369968320', self::$account_id);
+  $params = array(
+    'ad_format' => 'RIGHT_COLUMN_STANDARD',
+    'creative' => $creative,
+  );
+
+  $previews = $adaccount->getAdPreviews($fields, $params);
+  echo "---------------------------------------------------------------------------------------------"."\n";
+  print_r($previews);
+  echo "\n";
+*/
+
+ Reporting::createHtmlReport($reportArray['data']);
+ }
+
+ public function createHtmlReport($reportArray){
+  $i=0;
+  echo "<html><body>"."\n";
+  $s = "<table style=\"width:100%\">"."\n";
+  foreach( $reportArray as $report){
+  	if ($i == 0){
+		$tableHeaderArray = array_keys($report);
+		$s = $s."<tr>"."\n";
+		foreach ($tableHeaderArray as $tableHeader){
+			$s = $s."<th>".$tableHeader."</th>\n";
+		}
+		$s = $s."</tr>"."\n";
+	   	$i = 1;
+    	}
+	
+	$s = $s."<tr>"."\n";
+        foreach ($report as $tableRow){
+                $s = $s."<th>".$tableRow."</th>\n";
+        }
+        $s = $s."</tr>"."\n";
+  }
+  echo $s;
+  echo "</html></body>";
+ }
+
+}
+Reporting::init();
+Reporting::api_init();
+Reporting::parseArguments($argv);
+?>

@@ -28,4 +28,6 @@ abstract class PhotoDataFields {
 
   const CAPTION = 'caption';
   const URL = 'url';
+  const IMAGE_HASH = 'image_hash';
+
 }

@@ -87,6 +87,11 @@ class AdGroup extends AbstractArchivableCrudObject
     AdGroupFields::OBJECTIVE,
     AdGroupFields::REDOWNLOAD,
     AdGroupFields::SOCIAL_PREFS,
+
+    'tracking_and_conversion_with_defaults',
+    'tracking_specs',
+    'url_override',
+    'adcreatives',
   );
 
   /**

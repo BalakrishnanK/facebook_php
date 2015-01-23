@@ -73,6 +73,7 @@ class RequestException extends Exception {
 
     $this->statusCode = $status_code;
     $errorData = static::getErrorData($response_data);
+    print_r($errorData)."\n";
 
     parent::__construct($errorData['message'], $errorData['code']);
 

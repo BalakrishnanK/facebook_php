@@ -26,12 +26,11 @@ namespace FacebookAds\Object;
 
 use FacebookAds\Object\Fields\AdSetFields;
 use FacebookAds\Object\Traits\FieldValidation;
-use FacebookAds\Object\Traits\ObjectValidation;
 use FacebookAds\Cursor;
 
 class AdSet extends AbstractArchivableCrudObject
   implements CanRedownloadInterface {
-  use FieldValidation, ObjectValidation;
+  use FieldValidation;
 
   /**
    * @var string
@@ -65,7 +64,10 @@ class AdSet extends AbstractArchivableCrudObject
     AdSetFields::BID_TYPE,
     AdSetFields::BID_INFO,
     AdSetFields::PROMOTED_OBJECT,
-    AdSetFields::UPDATED_TIME,
+    'adcreatives',
+    'stats',
+    'activities',
+    'adgroups'
   );
 
   /**
@@ -106,7 +108,7 @@ class AdSet extends AbstractArchivableCrudObject
   /**
    * @param array $fields
    * @param array $params
-   * @return AdStats
+   * @return Cursor
    */
   public function getStats(array $fields = array(), array $params = array()) {
     return $this->getOneByConnection(
