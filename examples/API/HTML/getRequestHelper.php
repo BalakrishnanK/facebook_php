@@ -50,6 +50,8 @@ use FacebookAds\Object\Fields\AdGroupFields;
 use FacebookAds\Object\AdVideo;
 use FacebookAds\Object\Fields\AdVideoFields;
 
+use FacebookAds\Object\CustomAudience;
+
 class getRequestHelper{
 
  private static $config = array();
@@ -180,6 +182,28 @@ class getRequestHelper{
   print_r($video_thumbnail->getResponse()->getContent());
  }
 
+ public function readCustomAudience($argv){
+  $audience = new CustomAudience($argv['id'], self::$account_id);
+  $fields = array('id', 'name', 'approximate_count', 'delivery_status',
+                        'lookalike_audience_ids', 'operation_status', 
+			'data_source', 'account_id');
+  $aud_read = $audience->read($fields, array());
+  print_r(json_encode($aud_read->getData()));
+ }
+
+ public function readReachEstimate($reachEstimateParams){
+  $fields = array('users', 'bid_estimations', 'estimate_ready');
+  $adaccount = new AdAccount(self::$account_id);
+  $targeting_spec = array('geo_locations'=>array('countries'=> array('IN')));
+  $targeting_spec['custom_audiences'] = array();
+  $custAudIds = $reachEstimateParams['custAudIds'];
+  foreach ($custAudIds as $custAudId){
+        array_push($targeting_spec['custom_audiences'], array('id' => $custAudId));
+  }
+  $params = array('currency' => 'INR', 'targeting_spec' => $targeting_spec);
+  print_r(json_encode($adaccount->getReachEstimate($fields, $params)->getData()));
+ }
+
  public function parse_arguments($argv){
   if(count($argv) == 0) {return 0;}
   if ($argv['type'] == 'adcampaign') {
@@ -197,6 +221,11 @@ class getRequestHelper{
   }else if($argv['type'] == 'getThumbnailImages'){
 	print_r($argv);
         getRequestHelper::getAdVideos($argv['video_id']);
+  }else if($argv['type'] == 'readaudience'){
+        getRequestHelper::readCustomAudience($argv);
+  }else if($argv['type'] == 'readReachEstimate'){
+	$argv1 = array('custAudIds' => array('6029131441720', '6029131446120'));
+	getRequestHelper::readReachEstimate($argv1);
   }
  }
 

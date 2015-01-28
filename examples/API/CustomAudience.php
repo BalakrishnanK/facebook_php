@@ -109,10 +109,12 @@ class CustomAudienceCreation{
   CustomAudienceFields::NAME => $customAudienceCreationParams['data']['Advertiser']['name'],
   CustomAudienceFields::DESCRIPTION => $customAudienceCreationParams['data']['Advertiser']['description'],
   ));
-
   $audience->create();
+  $fields = array('id', 'name', 'approximate_count', 'delivery_status',
+                        'lookalike_audience_ids', 'operation_status');
+  $aud_read = $audience->read($fields, array());
+  print_r(json_encode($aud_read->getData()));
   $audience->addUsers($emails, 'EMAIL_SHA256');
-  echo $audience->id;
  }
 
 

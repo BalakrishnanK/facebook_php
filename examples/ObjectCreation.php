@@ -313,152 +313,23 @@ class ObjectCreation{
 
  }
 
- public function createAdCreative_previews($creativeCreationParams, $adgroup_params){
-
-  $adaccount = new AdAccount(self::$account_id);
- 
-/*  if($creativeCreationParams['image_location'] != null){
-          $creativeCreationParams['image_hash'] = self::uploadImage($creativeCreationParams['image_location'])->hash;
-  }
-*/
-  if ($creativeCreationParams['spec_type'] != "post_based" && $creativeCreationParams['spec_type'] != "page_likes"
-	&& $creativeCreationParams['spec_type'] != 'promotion_app_installs'){
- 
-//  $creativeCreationParams['object_story_spec'] = self::createObjectSpec($creativeCreationParams);
-
-  if($creativeCreationParams['video_location'] != null){
-  	$creativeCreationParams['video_id'] = self::uploadVideo($creativeCreationParams['video_location'])->id;
-  }else{
-//  	$creativeCreationParams['video_id'] = '865199283531087';
-  }
-
-  echo $creativeCreationParams['video_id'];
-  $link_array_fields = array(
-      LinkDataFields::CALL_TO_ACTION => $creativeCreationParams['call_to_action'],
-        LinkDataFields::CAPTION=>$creativeCreationParams['caption'],
-        LinkDataFields::DESCRIPTION=>$creativeCreationParams['ad_description'],
-        LinkDataFields::IMAGE_HASH=>$creativeCreationParams['image_hash'],
-        LinkDataFields::LINK=>$creativeCreationParams['link'],
-        LinkDataFields::MESSAGE=>$creativeCreationParams['message'],
-        LinkDataFields::NAME=>$creativeCreationParams['ad_header'],
-  );
-  
-  $video_array_fields = array(
-        VideoDataFields::DESCRIPTION=>$creativeCreationParams['ad_description'],
-        VideoDataFields::IMAGE_HASH=>$creativeCreationParams['image_hash'],
-	VideoDataFields::VIDEO_ID=>$creativeCreationParams['video_id'],
-  );
-
-  $photo_array_fields = array(
-        PhotoDataFields::IMAGE_HASH=>$creativeCreationParams['image_hash'],
-        PhotoDataFields::CAPTION=>$creativeCreationParams['caption'],
-  );
-
-  $text_array_fields = array(
-        TextDataFields::MESSAGE=>$creativeCreationParams['message'],
-  );
-
-
-  $offer_array_fields = array(
-//	OfferDataFields::BARCODE_TYPE => 1,
-//	OfferDataFields::BARCODE => '123456789012',
-	OfferDataFields::CLAIM_LIMIT => 2,
-	OfferDataFields::COUPON_TYPE => 'online_only',
-	OfferDataFields::EXPIRATION_TIME => (new \DateTime("+2 week"))->format(\DateTime::ISO8601),
-	'image_url' => 'https://fbcdn-creative-a.akamaihd.net/hads-ak-xpa1/t45.1600-4/10737133_6028413307920_1948919571_n.png',
-	OfferDataFields::MESSAGE => 'Redeem offer msg',
-	OfferDataFields::REMINDER_TIME => (new \DateTime("+1 week"))->format(\DateTime::ISO8601),
-	OfferDataFields::REDEMPTION_LINK => 'https://zapr.in/',
-	OfferDataFields::REDEMPTION_CODE => '124432',	
-	OfferDataFields::TITLE	=> 'Redeem Offer title',
-  );
-
-  $object_spec_fields = array(
-        ObjectStorySpecFields::LINK_DATA=>$link_array_fields,
-//	ObjectStorySpecFields::VIDEO_DATA=>$video_array_fields,
-//	ObjectStorySpecFields::OFFER_DATA=>$offer_array_fields,
-//	ObjectStorySpecFields::PHOTO_DATA=>$photo_array_fields,
-//	ObjectStorySpecFields::TEXT_DATA=>$text_array_fields,
-        ObjectStorySpecFields::PAGE_ID=>$creativeCreationParams['page_id'],
-  );
-
-  if ($creativeCreationParams['spec_type'] == "video_views"){
-	$object_spec_fields[ObjectStorySpecFields::VIDEO_DATA] = $video_array_fields;
-	unset($object_spec_fields[ObjectStorySpecFields::LINK_DATA]);
-  }
- 
-  $creative_spec_fields = array(
-        AdCreativeFields::NAME => $creativeCreationParams['name'],
-        AdCreativeFields::BODY => $creativeCreationParams['body'],
-        AdCreativeFields::IMAGE_HASH => $creativeCreationParams['image_hash'],
-        AdCreativeFields::OBJECT_STORY_SPEC => $creativeCreationParams['object_story_spec'],
-        AdCreativeFields::CALL_TO_ACTION_TYPE=> $creativeCreationParams['call_to_action_type'],
-  );
-
-  $creative_spec_fields1 = array(
-        AdCreativeFields::NAME => $creativeCreationParams['name'],
-        AdCreativeFields::BODY => $creativeCreationParams['body'],
-        AdCreativeFields::IMAGE_HASH => $creativeCreationParams['image_hash'],
-        AdCreativeFields::OBJECT_STORY_SPEC => $object_spec_fields,
-        AdCreativeFields::CALL_TO_ACTION_TYPE=> $creativeCreationParams['call_to_action_type'],
-  );
-
-  }else if ($creativeCreationParams['spec_type'] == "post_based"){
-  	$creative_spec_fields1 = array(
-        AdCreativeFields::NAME => $creativeCreationParams['name'],
-        AdCreativeFields::BODY => $creativeCreationParams['body'],
-        AdCreativeFields::OBJECT_STORY_ID =>  $creativeCreationParams['object_story_id'],
-//        AdCreativeFields::CALL_TO_ACTION_TYPE=> $creativeCreationParams['call_to_action_type'],
-  );
-
-
-  }else if ($creativeCreationParams['spec_type'] == "page_likes"){
-	$creative_spec_fields1 = array(
-        AdCreativeFields::NAME => $creativeCreationParams['name'],
-        AdCreativeFields::BODY => $creativeCreationParams['body'],
-	AdCreativeFields::IMAGE_HASH => $creativeCreationParams['image_hash'],
-        AdCreativeFields::OBJECT_ID =>  $creativeCreationParams['object_id']['page_id'],
-        AdCreativeFields::CALL_TO_ACTION_TYPE=> $creativeCreationParams['call_to_action_type'],
-  );
-  }else if ($creativeCreationParams['spec_type'] == "promotion_app_installs"){
-	$creative_spec_fields1 = array(
-        AdCreativeFields::NAME => $creativeCreationParams['name'],
-        AdCreativeFields::BODY => $creativeCreationParams['body'],
-        AdCreativeFields::OBJECT_ID =>  $creativeCreationParams['object_id']['application_id'],
-        AdCreativeFields::CALL_TO_ACTION_TYPE=> $creativeCreationParams['call_to_action_type'],
-  );
-  }
-
-
-  $fields = array(
-	'creative' => $creative_spec_fields1,
-  );
-
-  $params = array(
-	'creative' => $creative_spec_fields1,
-	'ad_format' => $creativeCreationParams['ad_format'],
-  );
-
-  $previews = $adaccount->getAdPreviews(array(),$params);
-  echo "---------------------------------------------------------------------------------------------"."\n";
-  print_r($previews->getResponse()->getContent());
-  die;
-  $creative->setData($creative_spec_fields1);
-  $creative->create();
-  echo 'Creative ID: '.$creative->id . "\n";
-  $adgroup_params['creative_array'] = array('creative_id' => $creative->id);
-  die;
-  return $creative;
- }
-
  public function uploadVideo($video_name){
   $video = new AdVideo(null, self::$account_id);
   $video_location = ObjectCreation::uploadVideoToLocal();
   $video->{AdVideoFields::SOURCE} = $video_location[0];//ObjectCreation::uploadVideoToLocal();
   $video->{AdVideoFields::NAME} = substr($video_location[1], 0, strlen($video_location[1])-4);
   $video->create();
-  $video_thumbnail = $video->read(array('thumbnails'), array());
-  print_r(json_encode($video_thumbnail->getData()));
+  sleep(15);
+//  $video_thumbnail = $video->read(array('thumbnails'), array());
+  while(1){
+  $video = new AdVideo($video->id, self::$account_id);
+  $video_thumbnail = $video->read(array('thumbnails',), array());
+  $video_thumb_array = $video_thumbnail->getData();
+  if (count($video_thumb_array['thumbnails']) > 3){
+  	print_r(json_encode($video_thumb_array));
+	break;
+     }
+  }
   return $video;
  }
 
@@ -471,26 +342,6 @@ class ObjectCreation{
   $image->create();
   echo $image->hash;
   return $image;
- }
-
- public function createObjectSpec($creativeCreationParams){
-  $linkdata = new LinkData(null, self::$account_id);
-  $linkdata->setData(array(
-//   	LinkDataFields::CALL_TO_ACTION => $creativeCreationParams['call_to_action'],
-   	LinkDataFields::CAPTION=>$creativeCreationParams['caption'],
-   	LinkDataFields::DESCRIPTION=>$creativeCreationParams['ad_description'],
-   	LinkDataFields::IMAGE_HASH=>$creativeCreationParams['image_hash'],
-   	LinkDataFields::LINK=>$creativeCreationParams['link'],
-   	LinkDataFields::MESSAGE=>$creativeCreationParams['message'],
-   	LinkDataFields::NAME=>$creativeCreationParams['ad_name'],
-  ));
-
-  $objectstoryspec = new ObjectStorySpec(null, self::$account_id);
-  $objectstoryspec->setData(array(
-   	ObjectStorySpecFields::LINK_DATA=>$linkdata,
-   	ObjectStorySpecFields::PAGE_ID=>$creativeCreationParams['page_id'],
-  ));
-  return $objectstoryspec;
  }
 
  public function createAdGroup($adgroupCreationParams){
@@ -512,9 +363,69 @@ class ObjectCreation{
   echo $adgroup->id;
  }
 
+
+ public function updateAdSetAudience($adSetUpdateParams){
+  $adset = new AdSet($adSetUpdateParams['id'], self::$account_id);
+  $adset_targeting = $adset->read(array('targeting'), array())->getData();
+
+  $custAudIds = $adSetUpdateParams['custAudIds'];
+  foreach ($custAudIds as $custAudId){
+        array_push($adset_targeting['targeting']['custom_audiences'], array('id' => $custAudId));
+  }
+
+  $adsetFields = array(
+        AdSetFields::TARGETING => $adset_targeting['targeting'],
+  );
+  $adset->setData($adsetFields);
+  print_r($adset->update()->getData()['id']);
+ }
+
+ public function updateAdSet($adSetCreationParams){
+  $adset = new AdSet($adSetCreationParams['ad_set_id'], self::$account_id);
+
+  $adsetFieldArray = array();
+  if (array_key_exists('daily_budget', $adSetCreationParams)){
+        $adsetFieldArray[AdSetFields::DAILY_BUDGET] = $adSetCreationParams['daily_budget'];
+  }else if (array_key_exists('lifetime_budget', $adSetCreationParams)){
+        $adsetFieldArray[AdSetFields::LIFETIME_BUDGET] = $adSetCreationParams['lifetime_budget'];
+        if (array_key_exists('pacing_type', $adsetCreationParams)){
+                $adsetFieldArray['pacing_type'] = array('day_parting');
+                $adsetFieldArray['campaign_schedule'] = array(
+                                                array('start_minute' => 540, 'end_minute' => 720, 'days' => array(1,2,3,4,5)),
+                                                array('start_minute' => 540, 'end_minute' => 720, 'days' => array(0,6))
+                                                );
+        }
+  }
+  if (array_key_exists('start_time', $adSetCreationParams)){
+        $adsetFieldArray[AdSetFields::START_TIME] = $adSetCreationParams['start_time'];
+  }
+  if (array_key_exists('end_time', $adSetCreationParams)){
+        $adsetFieldArray[AdSetFields::END_TIME] = $adSetCreationParams['end_time'];
+  }else {
+      if (array_key_exists('lifetime_budget', $adSetCreationParams)){
+             throw new \Exception(
+                'You must set end time for lifetime');
+        }
+  }
+
+  if (array_key_exists('bid_type', $adSetCreationParams)){
+        $adSetFieldsArray[AdSetFields::BID_TYPE] = $adSetCreationParams['bid_type'];
+  }
+
+  if (array_key_exists('bid_info', $adSetCreationParams)){
+        $adSetFieldsArray[AdSetFields::BID_TYPE] = $adSetCreationParams['bid_info'];
+  }
+
+  $adset->setData($adsetFieldArray);
+  $adset->update();
+  echo 'AdSet  ID: '. $adset->id . "\n";
+  return $adset;
+ }
+
  public function parse_arguments($argv){
 //  print_r($argv1);
 //  die;
+  if(count($argv) == 0) {return 0;}
   $argv = $argv['data']['Advertiser'];
 //  die;
   if ($argv['type'] == 'adcampaign') {
@@ -665,7 +576,7 @@ class ObjectCreation{
                 $creativeparams['image_location'] = ObjectCreation::uploadImageToLocal();
         }
 
-	ObjectCreation::createAdCreative_previews($creativeparams, $argv);
+//	ObjectCreation::createAdCreative_previews($creativeparams, $argv);
 //      print_r($creativeparams);
 //        $adgroupparams = array(
 //         'name' => $argv['ad_name'],
@@ -687,8 +598,9 @@ class ObjectCreation{
 //      die;
 //        ObjectCreation::uploadVideo($argv['name']);
 	ObjectCreation::uploadImage(ObjectCreation::uploadImageToLocal());
+  }else if ($argv['type'] == 'update_audience'){
+	ObjectCreation::updateAdSetAudience($argv);
   }
-
 
  }
  

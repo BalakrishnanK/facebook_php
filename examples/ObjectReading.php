@@ -168,13 +168,15 @@ class ObjectDeletion{
 
 public function readAdCampaign($argv){
   if(count($argv) == 0) {return 0;}
-//  print_r($argv['id']);
+ // print_r($argv['id']);
   $adcampaign = new AdSet($argv['id'], self::$account_id);
   $fields = array('bid_info','budget_remaining','bid_type','campaign_group_id','campaign_status','created_time','creative_sequence','campaign_schedule','daily_budget','end_time','external_bid','inflation','lifetime_budget','promoted_object','start_time','targeting','topline_id','activities','name','adcreatives','stats', 'adgroups');
 
   $adcampaign_data = $adcampaign->read($fields, array())->getData();
+  if (isset($adcampaign_data['adgroups']['data'])){
   $adgroup_data = self::readAdGroup($adcampaign_data['adgroups']['data'][0]['id']);
   $adcampaign_data['adgroups'] = $adgroup_data;
+  }
   print_r(json_encode($adcampaign_data));
  }
 
